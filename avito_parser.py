@@ -91,23 +91,23 @@ class MyParse:
 class AvitoParse:
     def __init__(self,
                  url: str,
+                 csv_path: str,
                  keysword_list: List[str] = [],
                  count: int = 10,
                  max_price: int = 0,
                  min_price: int = 0,
                  address: str = None,
-                 csv_save: bool = False,
                  log_level: int = 0
                  ):
 
         """
         :param url: product's page url
+        :param csv_path: Path to the CSV
         :param keysword_list: Keywords
         :param count: How many products to be processed
         :param max_price: Maximum price
         :param min_price: Mininmum price
         :param address: Address
-        :param csv_save: Save or not to CSV
         :param log_level: 0 - success and errors, 1 - info, 2 - warnings, 3 - debug
         """
 
@@ -116,13 +116,12 @@ class AvitoParse:
         self.url = url
         self.keys_word = keysword_list
         self.count = count
-        self.title_file = self.__csv_file_name()
         self.max_price = int(max_price) if max_price else math.inf
         self.min_price = int(min_price)
         self.address = address
         self.log_level = log_level
         self.logger = MyLogger(log_level)
-        self.csv_save = csv_save
+        self.csv_path = csv_path
         self.visited = Visited("visited")
 
         self.wait_range = (5000, 7000)  # in ms
@@ -136,13 +135,10 @@ class AvitoParse:
         return title_file
 
     def __save_data(self, data: Product):
-        if not self.csv_save:
-            return
-        raise NotImplemented
-        # with open(f"result/{self.title_file}.csv", mode="a", newline='', encoding='utf-8', errors='ignore') as file:
-        #     writer = csv.writer(file, delimiter="|")
-        #     writer.writerow(
-        #         list(map(lambda x: x[1], filter(lambda y: not y[0].startswith("__"), data.__dict__.items()))))
+        with open(f"{self.csv_path}", mode="a", newline='', encoding='utf-8', errors='ignore') as file:
+            writer = csv.writer(file, delimiter="|")
+            writer.writerow(
+                list(map(lambda x: x[1], filter(lambda y: not y[0].startswith("__"), data.__dict__.items()))))
 
     def __check_product(self, item: Product):
         res = True
