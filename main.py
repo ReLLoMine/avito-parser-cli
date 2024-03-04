@@ -18,7 +18,7 @@ def main():
     parser = avito_parser.AvitoParse(
         url=args.url,
         csv_path=args.csv_path,
-        keysword_list=args.keywords,
+        keywords_list=args.keywords,
         count=args.count,
         max_price=args.max_price,
         min_price=args.min_price,

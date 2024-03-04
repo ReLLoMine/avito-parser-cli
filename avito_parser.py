@@ -92,7 +92,7 @@ class AvitoParse:
     def __init__(self,
                  url: str,
                  csv_path: str,
-                 keysword_list: List[str] = [],
+                 keywords_list: List[str] = [],
                  count: int = 10,
                  max_price: int = 0,
                  min_price: int = 0,
@@ -103,7 +103,7 @@ class AvitoParse:
         """
         :param url: product's page url
         :param csv_path: Path to the CSV
-        :param keysword_list: Keywords
+        :param keywords_list: Keywords
         :param count: How many products to be processed
         :param max_price: Maximum price
         :param min_price: Mininmum price
@@ -114,7 +114,7 @@ class AvitoParse:
         self.driver: BaseCase = None
         self.parser: MyParse = None
         self.url = url
-        self.keys_word = keysword_list
+        self.keywords = keywords_list
         self.count = count
         self.max_price = int(max_price) if max_price else math.inf
         self.min_price = int(min_price)
@@ -128,8 +128,8 @@ class AvitoParse:
 
     def __csv_file_name(self) -> str:
 
-        if self.keys_word:
-            title_file = "-".join(list(map(str.lower, self.keys_word)))
+        if self.keywords:
+            title_file = "-".join(list(map(str.lower, self.keywords)))
         else:
             title_file = 'all'
         return title_file
@@ -142,8 +142,8 @@ class AvitoParse:
 
     def __check_product(self, item: Product):
         res = True
-        if self.keys_word:
-            res = any([i.lower() in (item.description + item.title).lower() for i in self.keys_word])
+        if self.keywords:
+            res = any([i.lower() in (item.description + item.title).lower() for i in self.keywords])
         return res and self.min_price <= item.price <= self.max_price
 
     def __try_open_page(self, url: str):
