@@ -1,43 +1,18 @@
 import csv
 import math
 import os
+import sys
 import time
 import random
 from typing import List, IO, Set, Tuple
 
 from loguru import logger
+import loguru
 
 from product import Product
 from tags import AvitoCSSTags
 from seleniumbase import SB, BaseCase
 import re
-
-
-class MyLogger:
-    logger = logger
-
-    def __init__(self, log_level: int = 0):
-        self.log_level = log_level
-
-    def debug(self, message: str):
-        if self.log_level >= 3:
-            self.logger.debug(message)
-
-    def warning(self, message: str):
-        if self.log_level >= 2:
-            self.logger.warning(message)
-
-    def info(self, message: str):
-        if self.log_level >= 1:
-            self.logger.info(message)
-
-    def success(self, message: str):
-        if self.log_level >= 0:
-            self.logger.success(message)
-
-    def error(self, message: str):
-        if self.log_level >= 0:
-            self.logger.error(message)
 
 
 class Visited:
@@ -108,7 +83,7 @@ class AvitoParse:
         :param max_price: Maximum price
         :param min_price: Mininmum price
         :param address: Address
-        :param log_level: 0 - success and errors, 1 - info, 2 - warnings, 3 - debug
+        :param log_level: 0 - success and errors, 1 - info, 2 - debug
         """
 
         self.driver: BaseCase = None
@@ -120,11 +95,14 @@ class AvitoParse:
         self.min_price = int(min_price)
         self.address = address
         self.log_level = log_level
-        self.logger = MyLogger(log_level)
+        self.logger = logger
         self.csv_path = csv_path
         self.visited = Visited("visited")
 
         self.wait_range = (5000, 7000)  # in ms
+
+        self.logger.remove()
+        self.logger.add(sys.stdout, level=["SUCCESS", "INFO", "DEBUG"][log_level])
 
     def __csv_file_name(self) -> str:
 
@@ -282,8 +260,8 @@ class AvitoParse:
 
     def parse(self):
         with SB(uc=True,
-                headed=True if self.log_level == 3 else False,
-                headless=True if self.log_level != 3 else False,
+                headed=True if self.log_level == 2 else False,
+                headless=True if self.log_level != 2 else False,
                 page_load_strategy="eager",
                 block_images=True,
                 # skip_js_waits=True,
